@@ -1,5 +1,5 @@
 {
-  "name": "react-tiniest-router",
+  "name": "@graywolfai/react-tiniest-router",
   "version": "0.1.2",
   "main": "dist/index.js",
   "module": "dist/react-tiniest-router.esm.js",
@@ -25,6 +25,9 @@
     "semi": true,
     "singleQuote": true,
     "trailingComma": "es5"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "devDependencies": {
     "@testing-library/react": "^10.0.4",
