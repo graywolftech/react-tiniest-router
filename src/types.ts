@@ -1,4 +1,4 @@
-type AnyObject = {[x: string]: any}
+type AnyObject = { [x: string]: any };
 
 export type RouteType = {
   id: string;
@@ -13,11 +13,11 @@ export interface RoutesType {
 export type RouterStateType = {
   routeId: string;
   path: string;
-  params: AnyObject;
-  queryParams: AnyObject;
+  params: Record<string, string>;
+  queryParams: Record<string, string>;
   extra?: AnyObject;
   options?: AnyObject;
-}
+};
 
 export type RouterContextType = RouterStateType & {
   goTo: (route: RouteType, params?: AnyObject, queryParams?: AnyObject) => void;
