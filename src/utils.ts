@@ -24,7 +24,12 @@ export const getRegexMatches = (string, regexExpression, callback) => {
   }
 };
 
-export const replaceUrlParams = (path, params, queryParams = {}) => {
+export const replaceUrlParams = (
+  path: string,
+  params: Record<string, string>,
+  queryParams: Record<string, string>,
+  hash: string
+) => {
   const queryParamsString = queryString.stringify(queryParams).toString();
   const hasQueryParams = queryParamsString !== '';
   let newPath = path;
@@ -36,7 +41,9 @@ export const replaceUrlParams = (path, params, queryParams = {}) => {
       : newPath.replace(`/${paramKey}`, '');
   });
 
-  return `${newPath}${hasQueryParams ? `?${queryParamsString}` : ''}`;
+  return `${newPath}${hasQueryParams ? `?${queryParamsString}` : ''}${
+    hash ? `#${hash}` : ''
+  }`;
 };
 
 /**

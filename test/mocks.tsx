@@ -32,7 +32,7 @@ export const Gallery2 = () => {
 };
 
 export const Root = () => {
-  const { goTo, isRoute } = useRouter();
+  const { goTo, isRoute, currentUrl } = useRouter();
 
   return (
     <div>
@@ -45,12 +45,25 @@ export const Root = () => {
         <button onClick={() => goTo(routes.gallery, { imageId: 2 })}>
           go to picture 2
         </button>
+        <button onClick={() => goTo(routes.about, {}, {}, 'test-hash')}>
+          go to about with hash
+        </button>
       </div>
 
       <br />
 
-      {isRoute(routes.home) && <div>Welcome home</div>}
-      {isRoute(routes.about) && <div>About us</div>}
+      {isRoute(routes.home) && (
+        <div>
+          <div>Welcome home</div>
+          <div>{currentUrl}</div>
+        </div>
+      )}
+      {isRoute(routes.about) && (
+        <div>
+          <div>About us</div>
+          <div>{currentUrl}</div>
+        </div>
+      )}
       {isRoute(routes.gallery) && <Gallery />}
       {isRoute(routes.gallery2) && <Gallery2 />}
       {}

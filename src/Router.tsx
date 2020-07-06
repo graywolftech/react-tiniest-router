@@ -13,7 +13,7 @@ export const Router: React.FC<{ routes: RoutesType }> = ({
     path: '/',
     params: {},
     queryParams: {},
-    extra: {},
+    hash: '',
     options: {},
   });
 
@@ -22,7 +22,8 @@ export const Router: React.FC<{ routes: RoutesType }> = ({
   const currentUrl: string = replaceUrlParams(
     state.path,
     state.params,
-    state.queryParams
+    state.queryParams,
+    state.hash
   );
 
   useEffect(() => {
@@ -32,7 +33,7 @@ export const Router: React.FC<{ routes: RoutesType }> = ({
         return {
           key: route.path,
           value: (params, queryParams) => {
-            goTo(route, params, queryParams);
+            goTo(route, params, queryParams, window.location.hash.substr(1));
           },
         };
       })
@@ -58,20 +59,15 @@ export const Router: React.FC<{ routes: RoutesType }> = ({
     }
   }, [currentUrl]);
 
-  const goTo = (
-    route: RouteType,
-    params = {},
-    queryParams = {},
-    extra = {}
-  ) => {
-    const { id, path, extra: routeExtra } = route;
+  const goTo = (route: RouteType, params = {}, queryParams = {}, hash = '') => {
+    const { id, path } = route;
     setState({
       ...state,
       routeId: id,
       path,
       params,
       queryParams,
-      extra: { ...routeExtra, ...extra },
+      hash,
     });
   };
 

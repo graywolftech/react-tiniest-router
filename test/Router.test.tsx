@@ -85,9 +85,42 @@ describe('Router tests', () => {
     global.window.location = {
       search: '?imageId=1',
       pathname: '/gallery2',
+      hash: '',
     } as Location;
     act(() => window.onpopstate({ type: 'popstate' } as PopStateEvent));
 
     expect(screen.getByText('Browsing picture 1')).toBeDefined();
+  });
+
+  it('navigates to about with a hash', () => {
+    // arrange
+    render(
+      <Router routes={routes}>
+        <Root />
+      </Router>
+    );
+
+    // act
+    fireEvent.click(screen.getByText('go to about with hash'));
+
+    // assert
+    expect(screen.getByText('About us')).toBeDefined();
+    expect(screen.getByText('/about#test-hash')).toBeDefined();
+
+    fireEvent.click(screen.getByText('go home'));
+    expect(screen.getByText('/')).toBeDefined();
+
+    // Simulate "window.location.back()"
+    delete global.window.location;
+    global.window = Object.create(window);
+    global.window.location = {
+      search: '',
+      pathname: '/about',
+      hash: '#test-hash',
+    } as Location;
+    act(() => window.onpopstate({ type: 'popstate' } as PopStateEvent));
+
+    // expect(screen.getByText('Browsing picture 1')).toBeDefined();
+    expect(screen.getByText('/about#test-hash')).toBeDefined();
   });
 });
