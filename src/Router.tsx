@@ -54,7 +54,9 @@ export const Router: React.FC<{ routes: RoutesType }> = ({
   }, []);
 
   useEffect(() => {
-    if (window.location.pathname !== currentUrl) {
+    const locationUrl =
+      window.location.pathname + window.location.search + window.location.hash;
+    if (locationUrl !== currentUrl) {
       window.history.pushState(null, null, currentUrl);
     }
   }, [currentUrl]);
