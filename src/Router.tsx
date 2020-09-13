@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { replaceUrlParams, createRouter, RouterHandler } from './utils';
 import { mapObject } from './utils';
 import { RouterContext } from './router-context';
@@ -28,7 +28,7 @@ export const Router: React.FC<{ routes: RoutesType }> = ({
 
   useEffect(() => {
     //create a router from the routes object
-    router.current = createRouter(
+    const local = (router.current = createRouter(
       mapObject(routes, route => {
         return {
           key: route.path,
@@ -37,18 +37,15 @@ export const Router: React.FC<{ routes: RoutesType }> = ({
           },
         };
       })
-    );
+    ));
 
     //initial location
     router.current(window.location.pathname, window.location.search.substr(1));
 
     //on change route
-    window.onpopstate = ev => {
+    window.onpopstate = (ev: PopStateEvent) => {
       if (ev.type === 'popstate') {
-        router.current(
-          window.location.pathname,
-          window.location.search.substr(1)
-        );
+        local(window.location.pathname, window.location.search.substr(1));
       }
     };
   }, []);
@@ -57,23 +54,26 @@ export const Router: React.FC<{ routes: RoutesType }> = ({
     const locationUrl =
       window.location.pathname + window.location.search + window.location.hash;
     if (locationUrl !== currentUrl) {
-      window.history.pushState(null, null, currentUrl);
+      window.history.pushState(null, '', currentUrl);
     }
   }, [currentUrl]);
 
-  const goTo = (route: RouteType, params = {}, queryParams = {}, hash = '') => {
-    const { id, path } = route;
-    setState({
-      ...state,
-      routeId: id,
-      path,
-      params,
-      queryParams,
-      hash,
-    });
-  };
+  const goTo = useCallback(
+    (route: RouteType, params = {}, queryParams = {}, hash = '') => {
+      const { id, path } = route;
+      setState({
+        ...state,
+        routeId: id,
+        path,
+        params,
+        queryParams,
+        hash,
+      });
+    },
+    [state]
+  );
 
-  const isRoute = route => route.id === state.routeId;
+  const isRoute = (route: RouteType) => route.id === state.routeId;
 
   return (
     <RouterContext.Provider

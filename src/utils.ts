@@ -9,15 +9,22 @@ export const mapObject = <T, V>(
   object: Record<string, T>,
   fn: (value: T, key: string) => { key: string; value: V }
 ): Record<string, V> => {
-  return Object.keys(object).reduce((accum, objKey) => {
-    const val = object[objKey];
-    const { key, value } = fn(val, objKey);
-    accum[key] = value;
-    return accum;
-  }, {});
+  return Object.keys(object).reduce(
+    (accum, objKey) => {
+      const val = object[objKey];
+      const { key, value } = fn(val, objKey);
+      accum[key] = value;
+      return accum;
+    },
+    {} as Record<string, V>
+  );
 };
 
-export const getRegexMatches = (string, regexExpression, callback) => {
+export const getRegexMatches = (
+  string: string,
+  regexExpression: RegExp,
+  callback: (match: RegExpMatchArray) => void
+) => {
   let match;
   while ((match = regexExpression.exec(string)) !== null) {
     callback(match);
