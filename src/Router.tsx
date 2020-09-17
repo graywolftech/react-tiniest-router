@@ -14,7 +14,6 @@ export const Router: React.FC<{ routes: RoutesType }> = ({
     params: {},
     queryParams: {},
     hash: '',
-    options: {},
   });
 
   const router = useRef<RouterHandler | null>(null);

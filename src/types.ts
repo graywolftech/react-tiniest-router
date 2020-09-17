@@ -1,4 +1,5 @@
-type AnyObject = { [x: string]: any };
+export type RouterParams = { [x: string]: string | string[] };
+export type RouterQueryParams = { [x: string]: string };
 
 export type RouteType = {
   id: string;
@@ -12,17 +13,16 @@ export interface RoutesType {
 export type RouterStateType = {
   routeId: string;
   path: string;
-  params: Record<string, string>;
-  queryParams: Record<string, string>;
+  params: RouterParams;
+  queryParams: RouterQueryParams;
   hash: string;
-  options?: AnyObject;
 };
 
 export type RouterContextType = RouterStateType & {
   goTo: (
     route: RouteType,
-    params?: AnyObject,
-    queryParams?: AnyObject,
+    params?: RouterParams,
+    queryParams?: RouterQueryParams,
     hash?: string
   ) => void;
   isRoute: (route: RouteType) => boolean;

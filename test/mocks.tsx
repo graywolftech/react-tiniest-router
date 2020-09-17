@@ -39,10 +39,10 @@ export const Root = () => {
       <div>
         <button onClick={() => goTo(routes.home)}>go home</button>
         <button onClick={() => goTo(routes.about)}>go to about</button>
-        <button onClick={() => goTo(routes.gallery2, {}, { imageId: 1 })}>
+        <button onClick={() => goTo(routes.gallery2, {}, { imageId: '1' })}>
           go to picture 1
         </button>
-        <button onClick={() => goTo(routes.gallery, { imageId: 2 })}>
+        <button onClick={() => goTo(routes.gallery, { imageId: '2' })}>
           go to picture 2
         </button>
         <button onClick={() => goTo(routes.about, {}, {}, 'test-hash')}>

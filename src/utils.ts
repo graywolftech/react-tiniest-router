@@ -2,38 +2,34 @@ import queryString from 'query-string';
 import route from 'path-match';
 
 //regex
-export const paramRegex = /\/(:([^/?]*)\??)/g;
+export const paramRegex = /\/(:([^/?*+]*)[*+?]?)/g;
 
 //utils
 export const mapObject = <T, V>(
   object: Record<string, T>,
   fn: (value: T, key: string) => { key: string; value: V }
 ): Record<string, V> => {
-  return Object.keys(object).reduce(
-    (accum, objKey) => {
-      const val = object[objKey];
-      const { key, value } = fn(val, objKey);
-      accum[key] = value;
-      return accum;
-    },
-    {} as Record<string, V>
-  );
+  return Object.keys(object).reduce((accum, objKey) => {
+    const val = object[objKey];
+    const { key, value } = fn(val, objKey);
+    accum[key] = value;
+    return accum;
+  }, {} as Record<string, V>);
 };
 
-export const getRegexMatches = (
-  string: string,
-  regexExpression: RegExp,
-  callback: (match: RegExpMatchArray) => void
-) => {
+export const getRegexMatches = (string: string) => {
   let match;
-  while ((match = regexExpression.exec(string)) !== null) {
-    callback(match);
+  const matches: string[][] = [];
+  while ((match = paramRegex.exec(string)) !== null) {
+    matches.push(match.map(value => value));
   }
+
+  return matches;
 };
 
 export const replaceUrlParams = (
   path: string,
-  params: Record<string, string>,
+  params: Record<string, string | string[]>,
   queryParams: Record<string, string>,
   hash: string
 ) => {
@@ -41,10 +37,13 @@ export const replaceUrlParams = (
   const hasQueryParams = queryParamsString !== '';
   let newPath = path;
 
-  getRegexMatches(path, paramRegex, ([_, paramKey, paramKeyWithoutColon]) => {
+  getRegexMatches(path).forEach(([_, paramKey, paramKeyWithoutColon]) => {
     const value = params[paramKeyWithoutColon];
     newPath = value
-      ? newPath.replace(paramKey, value)
+      ? newPath.replace(
+          paramKey,
+          typeof value === 'string' ? value : value.join('/')
+        )
       : newPath.replace(`/${paramKey}`, '');
   });
 
