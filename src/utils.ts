@@ -44,7 +44,7 @@ export const replaceUrlParams = (
           paramKey,
           typeof value === 'string' ? value : value.join('/')
         )
-      : newPath.replace(`/${paramKey}`, '');
+      : newPath.replace(`/${paramKey}`, '/');
   });
 
   return `${newPath}${hasQueryParams ? `?${queryParamsString}` : ''}${
