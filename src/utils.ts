@@ -1,5 +1,28 @@
+import { Key, pathToRegexp } from 'path-to-regexp';
 import queryString from 'query-string';
-import route from 'path-match';
+
+export const createMatcher = (path: string) => {
+  // If a path contains "*" at the end, make the parameter accept an empty string
+  path = path.replace(/:([^/]+)\@\//g, (_, match) => `:${match}([^/#?]*)/`);
+  var keys: Key[] = [];
+  var re = pathToRegexp(path, keys);
+
+  return function(pathname: string) {
+    var m = re.exec(pathname);
+    if (!m) return false;
+
+    const params: Record<string, string> = {};
+    for (const [i, key] of keys.entries()) {
+      const param = m[i + 1];
+      if (!param) continue;
+      let value = decodeURIComponent(param);
+      // TODO repeat
+      params[key.name] = value;
+    }
+
+    return params;
+  };
+};
 
 //regex
 export const paramRegex = /\/(:([^/?*+]*)[*+?]?)/g;
@@ -80,7 +103,7 @@ export const createRouter = (routes: {
   [path: string]: GoToHandler;
 }): RouterHandler => {
   const matchers = Object.keys(routes).map((path): [Matcher, GoToHandler] => [
-    route()(path),
+    createMatcher(path),
     routes[path],
   ]);
 
