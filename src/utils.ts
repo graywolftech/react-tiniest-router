@@ -1,5 +1,28 @@
+import { Key, pathToRegexp } from 'path-to-regexp';
 import queryString from 'query-string';
-import route from 'path-match';
+
+export const createMatcher = (path: string) => {
+  // If a path contains "*" at the end, make the parameter accept an empty string
+  path = path.replace(/:([^/]+)\*\//g, (_, match) => `:${match}([^/#?]*)/`);
+  var keys: Key[] = [];
+  var re = pathToRegexp(path, keys);
+
+  return function(pathname: string) {
+    var m = re.exec(pathname);
+    if (!m) return false;
+
+    const params: Record<string, string> = {};
+    for (const [i, key] of keys.entries()) {
+      const param = m[i + 1];
+      if (!param) continue;
+      let value = decodeURIComponent(param);
+      // TODO repeat
+      params[key.name] = value;
+    }
+
+    return params;
+  };
+};
 
 //regex
 export const paramRegex = /\/(:([^/?]*)\??)/g;
@@ -9,22 +32,33 @@ export const mapObject = <T, V>(
   object: Record<string, T>,
   fn: (value: T, key: string) => { key: string; value: V }
 ): Record<string, V> => {
-  return Object.keys(object).reduce((accum, objKey) => {
-    const val = object[objKey];
-    const { key, value } = fn(val, objKey);
-    accum[key] = value;
-    return accum;
-  }, {});
+  return Object.keys(object).reduce(
+    (accum, objKey) => {
+      const val = object[objKey];
+      const { key, value } = fn(val, objKey);
+      accum[key] = value;
+      return accum;
+    },
+    {} as Record<string, V>
+  );
 };
 
-export const getRegexMatches = (string, regexExpression, callback) => {
+export const getRegexMatches = (
+  string: string,
+  regexExpression: RegExp,
+  callback: (match: RegExpMatchArray) => void
+) => {
   let match;
   while ((match = regexExpression.exec(string)) !== null) {
     callback(match);
   }
 };
 
-export const replaceUrlParams = (path, params, queryParams = {}) => {
+export const replaceUrlParams = (
+  path: string,
+  params: Record<string, string>,
+  queryParams = {}
+) => {
   const queryParamsString = queryString.stringify(queryParams).toString();
   const hasQueryParams = queryParamsString !== '';
   let newPath = path;
@@ -67,7 +101,7 @@ export const createRouter = (routes: {
   [path: string]: GoToHandler;
 }): RouterHandler => {
   const matchers = Object.keys(routes).map((path): [Matcher, GoToHandler] => [
-    route()(path),
+    createMatcher(path),
     routes[path],
   ]);
 

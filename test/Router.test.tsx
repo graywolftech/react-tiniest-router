@@ -86,7 +86,11 @@ describe('Router tests', () => {
       search: '?imageId=1',
       pathname: '/gallery2',
     } as Location;
-    act(() => window.onpopstate({ type: 'popstate' } as PopStateEvent));
+    act(
+      () =>
+        window.onpopstate &&
+        window.onpopstate({ type: 'popstate' } as PopStateEvent)
+    );
 
     expect(screen.getByText('Browsing picture 1')).toBeDefined();
   });

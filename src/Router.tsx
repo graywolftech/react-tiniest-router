@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { replaceUrlParams, createRouter, RouterHandler } from './utils';
 import { mapObject } from './utils';
 import { RouterContext } from './router-context';
@@ -42,40 +42,42 @@ export const Router: React.FC<{ routes: RoutesType }> = ({
     router.current(window.location.pathname, window.location.search.substr(1));
 
     //on change route
-    window.onpopstate = ev => {
+    window.onpopstate = (ev: PopStateEvent) => {
       if (ev.type === 'popstate') {
-        router.current(
-          window.location.pathname,
-          window.location.search.substr(1)
-        );
+        if (router.current)
+          router.current(
+            window.location.pathname,
+            window.location.search.substr(1)
+          );
       }
     };
   }, []);
 
   useEffect(() => {
     if (window.location.pathname !== currentUrl) {
-      window.history.pushState(null, null, currentUrl);
+      window.history.pushState(null, '', currentUrl);
     }
   }, [currentUrl]);
 
-  const goTo = (
-    route: RouteType,
-    params = {},
-    queryParams = {},
-    extra = {}
-  ) => {
-    const { id, path, extra: routeExtra } = route;
-    setState({
-      ...state,
-      routeId: id,
-      path,
-      params,
-      queryParams,
-      extra: { ...routeExtra, ...extra },
-    });
-  };
+  const goTo = useCallback(
+    (route: RouteType, params = {}, queryParams = {}, extra = {}) => {
+      const { id, path, extra: routeExtra } = route;
+      setState({
+        ...state,
+        routeId: id,
+        path,
+        params,
+        queryParams,
+        extra: { ...routeExtra, ...extra },
+      });
+    },
+    []
+  );
 
-  const isRoute = route => route.id === state.routeId;
+  const isRoute = useCallback(
+    (route: RouteType) => route.id === state.routeId,
+    [state.routeId]
+  );
 
   return (
     <RouterContext.Provider
