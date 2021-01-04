@@ -1,4 +1,4 @@
-export type RouterParams = { [x: string]: string | string[] };
+export type RouterParams = { [x: string]: string };
 export type RouterQueryParams = { [x: string]: string };
 
 export type RouteType = {

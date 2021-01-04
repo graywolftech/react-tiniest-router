@@ -52,7 +52,7 @@ export const getRegexMatches = (string: string) => {
 
 export const replaceUrlParams = (
   path: string,
-  params: Record<string, string | string[]>,
+  params: Record<string, string>,
   queryParams: Record<string, string>,
   hash: string
 ) => {
@@ -63,10 +63,7 @@ export const replaceUrlParams = (
   getRegexMatches(path).forEach(([_, paramKey, paramKeyWithoutColon]) => {
     const value = params[paramKeyWithoutColon];
     newPath = value
-      ? newPath.replace(
-          paramKey,
-          typeof value === 'string' ? value : value.join('/')
-        )
+      ? newPath.replace(paramKey, value)
       : newPath.replace(`/${paramKey}`, '/');
   });
 
