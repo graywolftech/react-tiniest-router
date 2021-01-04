@@ -78,6 +78,34 @@ const Gallery = () => {
 };
 ```
 
+5. Use modifiers to create special parameters.
+```js
+const routes = {
+  zeroOrMore: {
+    id: 'zeroOrMore',
+    // Matches "/", "/hi" and "/hi/ciao"
+    path: '/:foo*',
+  },
+  oneOrMore: {
+    id: 'oneOrMore',
+    // Matches "/hola" and "/hola/hallo" but not "/"
+    path: '/:bar+',
+  },
+  optional: {
+    id: 'optional',
+    // Matches "/" or "/bonjour"
+    path: '/:bar?',
+  },
+  emptyString: {
+    id: 'emptyString',
+    // qux matches an empty string meaning "/hi/hello" and "//hello" would both match
+    // This is a special modifier that is implemented in this library and not in `path-to-regexp`
+    path: /:qux@/:quuz
+}
+```
+
+> See [path-to-regexp](https://github.com/pillarjs/path-to-regexp) for more details.
+
 --- 
 
 ## FAQ
