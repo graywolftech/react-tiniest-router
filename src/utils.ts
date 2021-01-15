@@ -2,8 +2,8 @@ import { Key, pathToRegexp } from 'path-to-regexp';
 import queryString from 'query-string';
 
 export const createMatcher = (path: string) => {
-  // If a path contains "*" at the end, make the parameter accept an empty string
-  path = path.replace(/:([^/]+)\@\//g, (_, match) => `:${match}([^/#?]*)/`);
+  // If a path contains "@" at the end, make the parameter accept an empty string
+  path = path.replace(/:([^/]+)\@/g, (_, match) => `:${match}([^/#?]*)`);
   var keys: Key[] = [];
   var re = pathToRegexp(path, keys);
 

@@ -1,4 +1,9 @@
-import { replaceUrlParams, getRegexMatches, createMatcher } from '../src/utils';
+import {
+  replaceUrlParams,
+  getRegexMatches,
+  createMatcher,
+  createRouter,
+} from '../src/utils';
 
 describe('createMatcher', () => {
   it('should match empty string', () => {
@@ -6,9 +11,9 @@ describe('createMatcher', () => {
     let result = matcher('/a/b');
     expect(result).toEqual({ a: 'a', b: 'b' });
 
-    matcher = createMatcher('/:a@/:b');
-    result = matcher('//b');
-    expect(result).toEqual({ b: 'b' });
+    matcher = createMatcher('/:a/:b@');
+    result = matcher('/a/');
+    expect(result).toEqual({ a: 'a' });
   });
 });
 
@@ -39,5 +44,44 @@ describe('replaceUrlParams', () => {
         ''
       )
     ).toEqual('/a/b/c/d/e/f');
+  });
+
+  it('should render with empty string', () => {
+    expect(
+      replaceUrlParams(
+        '/test/:a@/:b@',
+        {
+          a: '',
+          b: '',
+        },
+        {},
+        ''
+      )
+    ).toEqual('/test//');
+  });
+});
+
+describe('createRouter', () => {
+  it('should match a single empty param', () => {
+    let called = false;
+    const router = createRouter({
+      '/test/:a@': () => (called = true),
+    });
+
+    expect(router('/test', '')).toBeFalsy();
+    expect(called).toBe(false);
+
+    expect(router('/test/', '')).toBeTruthy();
+    expect(called).toBe(true);
+  });
+
+  it('should match two empty params', () => {
+    let called = false;
+    const router = createRouter({
+      '/test/:a@/:b@': () => (called = true),
+    });
+
+    expect(router('/test//', '')).toBeTruthy();
+    expect(called).toBe(true);
   });
 });
