@@ -27,16 +27,17 @@ describe('replaceUrlParams', () => {
   it('should render a Router on the home page', () => {
     expect(
       replaceUrlParams(
-        '/:test/:one/:two*/:three+',
+        '/:test/:one/:two*/:three+/:four@',
         {
           test: 'a',
-          one: ['b', 'c'],
-          two: ['d'],
+          one: 'b/c',
+          two: 'd',
           three: 'e',
+          four: 'f',
         },
         {},
         ''
       )
-    ).toEqual('/a/b/c/d/e');
+    ).toEqual('/a/b/c/d/e/f');
   });
 });

@@ -25,7 +25,7 @@ export const createMatcher = (path: string) => {
 };
 
 //regex
-export const paramRegex = /\/(:([^/?*+]*)[*+?]?)/g;
+export const paramRegex = /\/(:([^/?*+@]*)[*+?@]?)/g;
 
 //utils
 export const mapObject = <T, V>(
